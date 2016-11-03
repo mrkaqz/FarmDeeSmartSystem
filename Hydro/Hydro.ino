@@ -5,6 +5,8 @@ int R1= 1000;
 int Ra=25; //Resistance of powering Pins
 int ECPin= A0;
 int ECPower =A4; 
+int ph_pin = A2; //This is the pin number connected to Po
+
 float PPMconversion=0.7;
  
  
@@ -43,7 +45,7 @@ float Temperature=10;
 float EC=0;
 float EC25 =0;
 int ppm =0;
- 
+int ECRead = 0; 
  
 float raw= 0;
 float Vin= 5;
@@ -84,25 +86,63 @@ void setup()
 void loop() {
   // put your main code here, to run repeatedly:
 
-GetEC(); 
-PrintReadings();
+  GetTemp();  
 
-delay(30000);
+  int measure = analogRead(ph_pin);
+  Serial.print("\n Measure: ");
+  Serial.print(measure);
+
+  double voltage = 5 / 1024.0 * measure; //classic digital to voltage conversion
+  Serial.print("\tVoltage: ");
+  Serial.print(voltage, 3);
+
+  // PH_step = (voltage@PH7 - voltage@PH4) / (PH7 - PH4)
+  // PH_probe = PH7 - ((voltage@PH7 - voltage@probe) / PH_step)
+
+  float PH700V = 2.500;
+  float PH686V = 2.466;
+  float PH400V = 2.935;
+  
+  float PH_Step = (PH700V-PH400V)/(7-4);
+
+  float Po = 7 - ((2.5 - voltage) / PH_Step);
+
+
+  
+  Serial.print("\tPH: ");
+  Serial.print(Po, 3);
+  Serial.print("\tTemp: ");
+  Serial.print(Temperature);
+  Serial.print(" *C ");
+  delay(2000);
+  
+  ECRead++;
+
+if (ECRead > 15){
+  GetEC(); 
+  PrintReadings();
+  ECRead = 0;
+}
 
 }
 
  
  
 //************ This Loop Is called From Main Loop************************//
-void GetEC(){
- 
- 
+
+void GetTemp() {
+
 //*********Reading Temperature Of Solution *******************//
 sensors.requestTemperatures();// Send the command to get temperatures
 Temperature=sensors.getTempCByIndex(0); //Stores Value in Variable
- 
- 
- 
+  
+}
+
+void GetEC(){
+
+//*********Reading Temperature Of Solution *******************//
+sensors.requestTemperatures();// Send the command to get temperatures
+Temperature=sensors.getTempCByIndex(0); //Stores Value in Variable
  
 //************Estimates Resistance of Liquid ****************//
 digitalWrite(ECPower,HIGH);
@@ -131,14 +171,12 @@ ppm=(EC25)*(PPMconversion*1000);
  
 //***This Loop Is called From Main Loop- Prints to serial usefull info ***//
 void PrintReadings(){
-Serial.print("Rc: ");
+Serial.print("   Rc: ");
 Serial.print(Rc);
 Serial.print(" EC: ");
 Serial.print(EC25*1000);
 Serial.print(" miliSimens  ");
 Serial.print(ppm);
 Serial.print(" ppm  ");
-Serial.print(Temperature);
-Serial.println(" *C ");
 };
  
