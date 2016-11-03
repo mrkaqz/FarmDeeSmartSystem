@@ -45,15 +45,12 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
  
- 
- 
- 
- 
+
  
 //************************* User Defined Variables ********************************************************//
  
  
-float CalibrationEC=0.3; //EC value of Calibration solution is s/cm
+float CalibrationEC=2.76; //EC value of Calibration solution is s/cm ??-> mS/CM
  
  
  
@@ -67,7 +64,7 @@ int R1= 1000;
 int Ra=25; //Resistance of powering Pins
 int ECPin= A0;
 //int ECGround=A1;
-//int ECPower =A4;
+int ECPower =A4;
  
  
 //*************Compensating for temperature ************************************//
@@ -121,7 +118,7 @@ void setup()
   //pinMode(TempProbePossitive , OUTPUT );//ditto but for positive
   //digitalWrite(TempProbePossitive , HIGH );
   pinMode(ECPin,INPUT);
-  //pinMode(ECPower,OUTPUT);//Setting pin for sourcing current
+  pinMode(ECPower,OUTPUT);//Setting pin for sourcing current
   //pinMode(ECGround,OUTPUT);//setting pin for sinking current
   //digitalWrite(ECGround,LOW);//We can leave the ground connected permanantly
  
@@ -166,10 +163,10 @@ while(i<=10){
  
  
  
-//digitalWrite(ECPower,HIGH);
+digitalWrite(ECPower,HIGH);
 raw= analogRead(ECPin);
 raw= analogRead(ECPin);// This is not a mistake, First reading will be low
-//digitalWrite(ECPower,LOW);
+digitalWrite(ECPower,LOW);
 buffer=buffer+raw;
 i++;
 delay(5000);

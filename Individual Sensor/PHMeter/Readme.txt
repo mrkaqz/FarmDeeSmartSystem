@@ -1,3 +1,5 @@
+https://forum.arduino.cc/index.php?topic=336012.0
+
 Hi all,
 
 First of all, I'm only speaking about the board labelled "www.auto-crtl.com" and "Logo_PHsensor v1.1". The one with only 6 pins in front of the BNC plug (not on the side) as you can see in image Pinout1.jpg.

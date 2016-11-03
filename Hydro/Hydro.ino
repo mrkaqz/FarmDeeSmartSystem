@@ -1,78 +1,10 @@
-/*
-  ElCheapo Arduino EC-PPM measurments
- 
-  This scrip uses a common USA two prong plug and a 47Kohm Resistor to measure the EC/PPM of a Aquaponics/Hydroponics Sytem.
-  You could modift this code to Measure other liquids if you change the resitor and values at the top of the code.
- 
-  This Program will give you a temperature based feed controller. See Read me in download file for more info.
- 
-  28/8/2015  Michael Ratcliffe  Mike@MichaelRatcliffe.com
- 
- 
-          This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
- 
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
- 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see .
- 
-    Parts:
-    -Arduino - Uno/Mega
-    -Standard American two prong plug
-    -1 kohm resistor
-    -DS18B20 Waterproof Temperature Sensor
- 
-    Limitations:
-    -
-    -
- 
-    See www.MichaelRatcliffe.com/Projects for a Pinout and user guide or consult the Zip you got this code from
- 
-*/
- 
- 
-//************************** Libraries Needed To Compile The Script [See Read me In Download] ***************//
-// Both below Library are custom ones [ SEE READ ME In Downloaded Zip If You Dont Know how To install] Use them or add a pull up resistor to the temp probe
- 
- 
 #include <OneWire.h>
 #include <DallasTemperature.h>
- 
- 
- 
- 
- 
- 
-//************************* User Defined Variables ********************************************************//
- 
- 
-//##################################################################################
-//-----------  Do not Replace R1 with a resistor lower than 300 ohms    ------------
-//##################################################################################
- 
  
 int R1= 1000;
 int Ra=25; //Resistance of powering Pins
 int ECPin= A0;
-//int ECGround=A1;
-int ECPower =A4;
- 
- 
-//*********** Converting to ppm [Learn to use EC it is much better**************//
-// Hana      [USA]        PPMconverion:  0.5
-// Eutech    [EU]          PPMconversion:  0.64
-//Tranchen  [Australia]  PPMconversion:  0.7
-// Why didnt anyone standardise this?
- 
- 
+int ECPower =A4; 
 float PPMconversion=0.7;
  
  
@@ -126,14 +58,8 @@ float buffer=0;
 void setup()
 {
   Serial.begin(9600);
-  //pinMode(TempProbeNegative , OUTPUT ); //seting ground pin as output for tmp probe
-  //digitalWrite(TempProbeNegative , LOW );//Seting it to ground so it can sink current
-  //pinMode(TempProbePossitive , OUTPUT );//ditto but for positive
-  //digitalWrite(TempProbePossitive , HIGH );
   pinMode(ECPin,INPUT);
   pinMode(ECPower,OUTPUT);//Setting pin for sourcing current
-  //pinMode(ECGround,OUTPUT);//setting pin for sinking current
-  //digitalWrite(ECGround,LOW);//We can leave the ground connected permanantly
  
   delay(100);// gives sensor time to settle
   sensors.begin();
@@ -154,28 +80,17 @@ void setup()
 };
 //******************************************* End of Setup **********************************************************************//
  
- 
- 
- 
-//************************************* Main Loop - Runs Forever ***************************************************************//
-//Moved Heavy Work To subroutines so you can call them from main loop without cluttering the main loop
-void loop()
-{
- 
- 
- 
- 
-GetEC();          //Calls Code to Go into GetEC() Loop [Below Main Loop] dont call this more that 1/5 hhz [once every five seconds] or you will polarise the water
-PrintReadings();  // Cals Print routine [below main loop]
- 
- 
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+GetEC(); 
+PrintReadings();
+
 delay(30000);
- 
- 
+
 }
-//************************************** End Of Main Loop **********************************************************************//
- 
- 
+
  
  
 //************ This Loop Is called From Main Loop************************//
@@ -212,9 +127,7 @@ ppm=(EC25)*(PPMconversion*1000);
  
 ;}
 //************************** End OF EC Function ***************************//
- 
- 
- 
+
  
 //***This Loop Is called From Main Loop- Prints to serial usefull info ***//
 void PrintReadings(){
@@ -227,16 +140,5 @@ Serial.print(ppm);
 Serial.print(" ppm  ");
 Serial.print(Temperature);
 Serial.println(" *C ");
- 
- 
-/*
-//********** Usued for Debugging ************
-Serial.print("Vdrop: ");
-Serial.println(Vdrop);
-Serial.print("Rc: ");
-Serial.println(Rc);
-Serial.print(EC);
-Serial.println("Siemens");
-//********** end of Debugging Prints *********
-*/
 };
+ 
